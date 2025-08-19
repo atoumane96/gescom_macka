@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::content}, ~{::js_assets})}">
+<head>
+    <title th:text="${isEdit ? 'Modifier le paramètre' : 'Nouveau paramètre'} + ' - GESCOM'">Paramètre - GESCOM</title>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/css/admin/settings-form.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div th:fragment="content">
+    <div class="form-container">
+        <!-- En-tête avec navigation -->
+        <header class="form-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="breadcrumb-nav">
+                        <a th:href="@{/admin/settings}" class="breadcrumb-link">
+                            <i class="fas fa-cogs"></i> Paramètres
+                        </a>
+                        <i class="fas fa-chevron-right breadcrumb-separator"></i>
+                        <span class="breadcrumb-current" th:text="${isEdit ? 'Modifier' : 'Nouveau'}">Action</span>
+                    </div>
+                    <div class="page-title">
+                        <h1>
+                            <i class="fas fa-edit" th:if="${isEdit}"></i>
+                            <i class="fas fa-plus" th:if="${!isEdit}"></i>
+                            <span th:text="${isEdit ? 'Modifier le paramètre' : 'Nouveau paramètre'}">Titre</span>
+                        </h1>
+                        <p class="subtitle" th:text="${isEdit ? 'Modifiez les propriétés de ce paramètre' : 'Créez un nouveau paramètre pour votre application'}">Sous-titre</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <a th:href="@{/admin/settings}" class="btn btn-outline">
+                        <i class="fas fa-times"></i> Annuler
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Messages d'alerte -->
+        <div class="alerts-container">
+            <div th:if="${error}" class="alert alert-error">
+                <div class="alert-content">
+                    <i class="fas fa-exclamation-circle alert-icon"></i>
+                    <div class="alert-message">
+                        <strong>Erreur</strong>
+                        <span th:text="${error}"></span>
+                    </div>
+                </div>
+                <button type="button" class="alert-close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success">
+                <div class="alert-content">
+                    <i class="fas fa-check-circle alert-icon"></i>
+                    <div class="alert-message">
+                        <strong>Succès</strong>
+                        <span th:text="${success}"></span>
+                    </div>
+                </div>
+                <button type="button" class="alert-close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Alerte paramètre système -->
+            <div th:if="${isEdit and isSystemSetting}" class="alert alert-info">
+                <div class="alert-content">
+                    <i class="fas fa-shield-alt alert-icon"></i>
+                    <div class="alert-message">
+                        <strong>Paramètre Système</strong>
+                        <span>Ce paramètre est géré par le système. Seule la valeur peut être modifiée.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerte duplication -->
+            <div th:if="${isDuplicate}" class="alert alert-warning">
+                <div class="alert-content">
+                    <i class="fas fa-copy alert-icon"></i>
+                    <div class="alert-message">
+                        <strong>Duplication de paramètre</strong>
+                        <span>Vous créez une copie du paramètre. Assurez-vous de modifier la clé pour qu'elle soit unique.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulaire principal -->
+        <div class="main-form">
+            <form th:action="@{/admin/settings/save}" th:object="${setting}" method="post" id="settingForm" novalidate>
+                <input type="hidden" th:field="*{id}">
+                
+                <!-- Progression des étapes -->
+                <div class="form-progress">
+                    <div class="progress-steps">
+                        <div class="step active" data-step="1">
+                            <div class="step-circle">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <span class="step-label">Informations</span>
+                        </div>
+                        <div class="step" data-step="2">
+                            <div class="step-circle">
+                                <i class="fas fa-edit"></i>
+                            </div>
+                            <span class="step-label">Valeur</span>
+                        </div>
+                        <div class="step" data-step="3">
+                            <div class="step-circle">
+                                <i class="fas fa-cogs"></i>
+                            </div>
+                            <span class="step-label">Configuration</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Étape 1: Informations de base -->
+                <div class="form-section active" id="step-1">
+                    <div class="section-header">
+                        <h2><i class="fas fa-info-circle"></i> Informations de base</h2>
+                        <p>Définissez les propriétés fondamentales du paramètre</p>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="key" class="form-label required">
+                                <i class="fas fa-key"></i> Clé du paramètre
+                            </label>
+                            <div class="input-wrapper">
+                                <input type="text" class="form-control" id="key" th:field="*{key}" 
+                                       th:readonly="${isEdit and isSystemSetting}"
+                                       placeholder="ex: app.name, company.email"
+                                       data-validation="required,key-format">
+                                <div class="input-icon">
+                                    <i class="fas fa-key"></i>
+                                </div>
+                            </div>
+                            <div class="form-help">
+                                <i class="fas fa-info-circle"></i>
+                                Identifiant unique du paramètre (format: categorie.nom)
+                            </div>
+                            <div class="form-feedback"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="category" class="form-label required">
+                                <i class="fas fa-tags"></i> Catégorie
+                            </label>
+                            <div class="input-wrapper">
+                                <select class="form-select" id="category" th:field="*{category}" 
+                                        th:disabled="${isEdit and isSystemSetting}"
+                                        data-validation="required">
+                                    <option value="">Sélectionner une catégorie</option>
+                                    <option th:each="cat : ${categories}" 
+                                            th:value="${cat}" 
+                                            th:text="${cat.displayName} + ' - ' + ${cat.description}">
+                                    </option>
+                                </select>
+                                <div class="input-icon">
+                                    <i class="fas fa-tags"></i>
+                                </div>
+                            </div>
+                            <div class="form-help">
+                                <i class="fas fa-info-circle"></i>
+                                Groupe de classification du paramètre
+                            </div>
+                            <div class="form-feedback"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="sortOrder" class="form-label">
+                                <i class="fas fa-sort-numeric-up"></i> Ordre d'affichage
+                            </label>
+                            <div class="input-wrapper">
+                                <input type="number" class="form-control" id="sortOrder" th:field="*{sortOrder}" 
+                                       min="0" placeholder="0">
+                                <div class="input-icon">
+                                    <i class="fas fa-sort-numeric-up"></i>
+                                </div>
+                            </div>
+                            <div class="form-help">
+                                <i class="fas fa-info-circle"></i>
+                                Position relative dans la catégorie (0 = premier)
+                            </div>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label for="description" class="form-label">
+                                <i class="fas fa-align-left"></i> Description
+                            </label>
+                            <div class="input-wrapper">
+                                <textarea class="form-control" id="description" th:field="*{description}" 
+                                          rows="3" th:readonly="${isEdit and isSystemSetting}"
+                                          placeholder="Description détaillée du paramètre"
+                                          data-counter="true" maxlength="500"></textarea>
+                                <div class="input-icon">
+                                    <i class="fas fa-align-left"></i>
+                                </div>
+                                <div class="char-counter">0/500</div>
+                            </div>
+                            <div class="form-help">
+                                <i class="fas fa-info-circle"></i>
+                                Description explicative du rôle de ce paramètre
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-actions">
+                        <button type="button" class="btn btn-primary" onclick="nextStep()">
+                            Suivant <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Étape 2: Configuration de la valeur -->
+                <div class="form-section" id="step-2">
+                    <div class="section-header">
+                        <h2><i class="fas fa-edit"></i> Configuration de la valeur</h2>
+                        <p>Définissez le type et la valeur du paramètre</p>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="valueType" class="form-label required">
+                                <i class="fas fa-code"></i> Type de valeur
+                            </label>
+                            <div class="input-wrapper">
+                                <select class="form-select" id="valueType" th:field="*{valueType}" 
+                                        th:disabled="${isEdit and isSystemSetting}"
+                                        data-validation="required">
+                                    <option th:each="type : ${valueTypes}" 
+                                            th:value="${type}" 
+                                            th:text="${type.displayName} + ' - ' + ${type.description}">
+                                    </option>
+                                </select>
+                                <div class="input-icon">
+                                    <i class="fas fa-code"></i>
+                                </div>
+                            </div>
+                            <div class="form-help">
+                                <i class="fas fa-info-circle"></i>
+                                Définit le format et la validation de la valeur
+                            </div>
+                            <div class="form-feedback"></div>
+                        </div>
+                        
+                        <!-- Conteneur dynamique pour la valeur -->
+                        <div class="form-group value-group">
+                            <label for="value" class="form-label">
+                                <i class="fas fa-edit"></i> Valeur
+                            </label>
+                            <div class="value-input-container" id="valueInputContainer">
+                                <div class="input-wrapper">
+                                    <input type="text" class="form-control" id="value" th:field="*{value}" 
+                                           placeholder="Saisir la valeur">
+                                    <div class="input-icon">
+                                        <i class="fas fa-edit"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-help" id="valueHelp">
+                                <i class="fas fa-info-circle"></i>
+                                Saisir la valeur selon le type sélectionné
+                            </div>
+                            <div class="form-feedback"></div>
+                        </div>
+                        
+                        <!-- Prévisualisation de la valeur -->
+                        <div class="form-group full-width">
+                            <div class="value-preview" id="valuePreview" style="display: none;">
+                                <div class="preview-header">
+                                    <i class="fas fa-eye"></i> Aperçu de la valeur
+                                </div>
+                                <div class="preview-content" id="previewContent"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-actions">
+                        <button type="button" class="btn btn-outline" onclick="previousStep()">
+                            <i class="fas fa-arrow-left"></i> Précédent
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="nextStep()">
+                            Suivant <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Étape 3: Configuration système -->
+                <div class="form-section" id="step-3">
+                    <div class="section-header">
+                        <h2><i class="fas fa-cogs"></i> Configuration système</h2>
+                        <p>Paramètres avancés et options de sécurité</p>
+                    </div>
+                    
+                    <div class="form-grid" th:if="${!isEdit or !isSystemSetting}">
+                        <div class="form-group full-width">
+                            <div class="toggle-group">
+                                <div class="toggle-item">
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="isSystem" th:field="*{isSystem}" class="toggle-input">
+                                        <label for="isSystem" class="toggle-label">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                    <div class="toggle-content">
+                                        <div class="toggle-title">
+                                            <i class="fas fa-shield-alt"></i>
+                                            Paramètre système
+                                        </div>
+                                        <div class="toggle-description">
+                                            Les paramètres système ne peuvent pas être supprimés
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="toggle-item">
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="isEncrypted" th:field="*{isEncrypted}" class="toggle-input">
+                                        <label for="isEncrypted" class="toggle-label">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                    <div class="toggle-content">
+                                        <div class="toggle-title">
+                                            <i class="fas fa-lock"></i>
+                                            Valeur cryptée
+                                        </div>
+                                        <div class="toggle-description">
+                                            Pour les mots de passe et données sensibles
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Résumé avant soumission -->
+                    <div class="form-summary">
+                        <div class="summary-header">
+                            <h3><i class="fas fa-clipboard-check"></i> Résumé de la configuration</h3>
+                        </div>
+                        <div class="summary-content">
+                            <div class="summary-item">
+                                <span class="summary-label">Clé :</span>
+                                <span class="summary-value" id="summary-key">-</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Catégorie :</span>
+                                <span class="summary-value" id="summary-category">-</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Type :</span>
+                                <span class="summary-value" id="summary-type">-</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Valeur :</span>
+                                <span class="summary-value" id="summary-value">-</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Description :</span>
+                                <span class="summary-value" id="summary-description">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-actions">
+                        <button type="button" class="btn btn-outline" onclick="previousStep()">
+                            <i class="fas fa-arrow-left"></i> Précédent
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                            <i class="fas fa-undo"></i> Réinitialiser
+                        </button>
+                        <button type="submit" class="btn btn-success btn-submit">
+                            <i class="fas fa-save"></i>
+                            <span th:text="${isEdit ? 'Modifier le paramètre' : 'Créer le paramètre'}">Action</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Aide rapide -->
+        <aside class="form-sidebar">
+            <div class="help-panel">
+                <div class="help-header">
+                    <i class="fas fa-question-circle"></i>
+                    <h3>Aide rapide</h3>
+                </div>
+                <div class="help-content">
+                    <div class="help-section">
+                        <h4><i class="fas fa-key"></i> Format de clé</h4>
+                        <p>Utilisez le format <code>categorie.nom</code></p>
+                        <div class="help-examples">
+                            <span class="example">app.name</span>
+                            <span class="example">mail.smtp.host</span>
+                            <span class="example">ui.theme.default</span>
+                        </div>
+                    </div>
+
+                    <div class="help-section">
+                        <h4><i class="fas fa-code"></i> Types de valeurs</h4>
+                        <ul class="help-list">
+                            <li><strong>STRING</strong> - Texte simple</li>
+                            <li><strong>INTEGER</strong> - Nombre entier</li>
+                            <li><strong>BOOLEAN</strong> - Vrai/Faux</li>
+                            <li><strong>EMAIL</strong> - Adresse email</li>
+                            <li><strong>URL</strong> - Adresse web</li>
+                            <li><strong>PASSWORD</strong> - Mot de passe crypté</li>
+                        </ul>
+                    </div>
+
+                    <div class="help-section">
+                        <h4><i class="fas fa-shield-alt"></i> Sécurité</h4>
+                        <div class="help-tip">
+                            <i class="fas fa-lightbulb"></i>
+                            Activez le cryptage pour les données sensibles comme les mots de passe et clés API.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Modal de validation -->
+    <div class="modal" id="validationModal">
+        <div class="modal-backdrop" onclick="closeValidationModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> Erreurs de validation</h3>
+                <button class="modal-close" onclick="closeValidationModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Veuillez corriger les erreurs suivantes :</p>
+                <ul id="validationErrors"></ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeValidationModal()">Compris</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts Fragment -->
+<div th:fragment="js_assets">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script th:src="@{/js/admin/settings-form.js}"></script>
+</div>
+</body>
+</html>
