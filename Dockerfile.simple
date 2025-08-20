@@ -1,27 +1,18 @@
-# Multi-stage build pour optimiser la taille de l'image
-FROM eclipse-temurin:17-jdk-alpine as builder
+# Dockerfile simple pour GESCOM
+# Utilise une image avec Maven intégré pour éviter les problèmes de construction
 
-# Installer Maven
-RUN apk add --no-cache maven
+FROM maven:3.9.4-eclipse-temurin-17 as builder
 
 # Définir le répertoire de travail
 WORKDIR /app
 
-# Copier les fichiers de configuration Maven
-COPY pom.xml .
-COPY mvnw .
-COPY .mvn .mvn
-
-# Télécharger les dépendances (optimisation des couches Docker)
-RUN mvn dependency:go-offline -B
-
-# Copier le code source
-COPY src ./src
+# Copier le projet complet
+COPY . .
 
 # Construire l'application
 RUN mvn clean package -DskipTests
 
-# Image finale légère
+# Image finale
 FROM eclipse-temurin:17-jre-alpine
 
 # Métadonnées
@@ -29,10 +20,7 @@ LABEL maintainer="GESCOM Team"
 LABEL description="Application de gestion commerciale GESCOM"
 LABEL version="1.0"
 
-# Créer un utilisateur non-root pour la sécurité
-RUN addgroup -g 1000 gescom && adduser -u 1000 -G gescom -s /bin/sh -D gescom
-
-# Installer des packages utiles
+# Installer curl pour le health check
 RUN apk add --no-cache curl
 
 # Définir le répertoire de travail
@@ -41,16 +29,10 @@ WORKDIR /app
 # Copier le JAR depuis l'étape de build
 COPY --from=builder /app/target/*.jar app.jar
 
-# Changer le propriétaire du fichier
-RUN chown gescom:gescom app.jar
-
-# Basculer vers l'utilisateur non-root
-USER gescom
-
 # Exposer le port
 EXPOSE 8080
 
-# Variables d'environnement par défaut
+# Variables d'environnement
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
 ENV SPRING_PROFILES_ACTIVE=docker
 
