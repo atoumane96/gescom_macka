@@ -161,3 +161,38 @@
 2025-08-20 09:03:22 [Thread-17] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
 2025-08-20 09:03:22 [Thread-17] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-5 - Shutdown initiated...
 2025-08-20 09:03:22 [Thread-17] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-5 - Shutdown completed.
+2025-08-20 09:03:23 [restartedMain] INFO  com.gescom.GescomApplication - Starting GescomApplication using Java 17.0.6 with PID 400348 (C:\MES APP\GESCOM\target\classes started by Dell in C:\MES APP\GESCOM)
+2025-08-20 09:03:23 [restartedMain] INFO  com.gescom.GescomApplication - No active profile set, falling back to 1 default profile: "default"
+2025-08-20 09:03:23 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-08-20 09:03:23 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 62 ms. Found 9 JPA repository interfaces.
+2025-08-20 09:03:24 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8085 (http)
+2025-08-20 09:03:24 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-08-20 09:03:24 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.16]
+2025-08-20 09:03:24 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-08-20 09:03:24 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 924 ms
+2025-08-20 09:03:24 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-6 - Starting...
+2025-08-20 09:03:24 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-6 - Added connection org.postgresql.jdbc.PgConnection@4835e0ef
+2025-08-20 09:03:24 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-6 - Start completed.
+2025-08-20 09:03:24 [restartedMain] INFO  o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:postgresql://localhost:5432/GESCOMDB'
+2025-08-20 09:03:24 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-08-20 09:03:24 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-08-20 09:03:24 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-08-20 09:03:24 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-08-20 09:03:24 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-08-20 09:03:24 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-08-20 09:03:26 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-08-20 09:03:26 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 77 mappings in 'requestMappingHandlerMapping'
+2025-08-20 09:03:26 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**, /uploads/images/**] in 'resourceHandlerMapping'
+2025-08-20 09:03:26 [restartedMain] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@93d2c48, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@18353612, org.springframework.security.web.context.SecurityContextHolderFilter@296e711b, org.springframework.security.web.header.HeaderWriterFilter@3520faff, org.springframework.web.filter.CorsFilter@550cb382, org.springframework.security.web.csrf.CsrfFilter@70322349, org.springframework.security.web.authentication.logout.LogoutFilter@2d3909a3, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@32722dba, org.springframework.security.web.session.ConcurrentSessionFilter@56453f82, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@1bab81cb, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@4fa1be0d, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@76304b64, org.springframework.security.web.session.SessionManagementFilter@378c6a51, org.springframework.security.web.access.ExceptionTranslationFilter@4f961841, org.springframework.security.web.access.intercept.AuthorizationFilter@576352e4]
+2025-08-20 09:03:26 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-08-20 09:03:26 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-08-20 09:03:26 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8085 (http) with context path ''
+2025-08-20 09:03:26 [restartedMain] INFO  com.gescom.GescomApplication - Started GescomApplication in 3.752 seconds (process running for 43353.359)
+2025-08-20 09:03:26 [restartedMain] INFO  com.gescom.config.DatabaseConfig - ? Initialisation de la base de données PostgreSQL...
+2025-08-20 09:03:26 [restartedMain] DEBUG org.hibernate.SQL - 
+    select
+        count(*) 
+    from
+        users u1_0
+2025-08-20 09:03:26 [restartedMain] INFO  com.gescom.config.DatabaseConfig - ? Base de données déjà initialisée, skip
+2025-08-20 09:03:26 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
