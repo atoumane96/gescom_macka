@@ -2,9 +2,9 @@
 spring:
   # Configuration de la base de données PostgreSQL
   datasource:
-    url: jdbc:postgresql://postgres:5432/gescom
-    username: ${SPRING_DATASOURCE_USERNAME:gescom_user}
-    password: ${SPRING_DATASOURCE_PASSWORD:gescom_password}
+    url: jdbc:postgresql://dpg-d2id0lbipnbc73aapadg-a.oregon-postgres.render.com:5432/gescom
+    username: postgres1
+    password: MDhVFIOzleBj2n7eQkFVOm7m8HeBVKnz
     driver-class-name: org.postgresql.Driver
     
     # Configuration du pool de connexions HikariCP

@@ -391,3 +391,7 @@
         users u1_0
 2025-08-20 09:37:39 [restartedMain] INFO  com.gescom.config.DatabaseConfig - ? Base de données déjà initialisée, skip
 2025-08-20 09:37:39 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-08-20 09:45:24 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-08-20 09:45:24 [Thread-41] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-08-20 09:45:24 [Thread-41] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-11 - Shutdown initiated...
+2025-08-20 09:45:24 [Thread-41] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-11 - Shutdown completed.
